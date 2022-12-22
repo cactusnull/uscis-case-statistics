@@ -14,7 +14,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Slider from "@material-ui/core/Slider";
 import { Box, TextField } from "@material-ui/core";
 
-type FY = "20" | "21";
+type FY = "20" | "21" | "22" | "23";
 const statusMap = new Map([
   ["Case Was Approved And My Decision Was Emailed", "Case Was Approved"],
   ["Case Was Received and A Receipt Notice Was Emailed", "Case Was Received"],
@@ -58,7 +58,7 @@ const App: React.FC<{}> = () => {
     if (!obj) return true;
     const format =
       mode === "data_center_year_code_day_serial"
-        ? selectedCenter + selectedFy + "9" + obj.day.toString().padStart(3, "0") + "XXXX"
+        ? (selectedCenter === "IOE" ? selectedCenter + "09" + (obj.day+1000+(Number.parseInt(selectedFy||"21") - 21)*366).toString() : selectedCenter + selectedFy + "9" + obj.day.toString().padStart(3, "0")) + "XXXX"
         : selectedCenter + selectedFy + obj.day.toString().padStart(3, "0") + "5XXXX";
     return format.startsWith(filter);
   };
@@ -357,7 +357,7 @@ const App: React.FC<{}> = () => {
           width={150}
           tickFormatter={(day) =>
             mode === "data_center_year_code_day_serial"
-              ? selectedCenter + selectedFy + "9" + day.toString().padStart(3, "0") + "XXXX"
+              ? (selectedCenter === "IOE" ? selectedCenter + "09" + (day+1000+(Number.parseInt(selectedFy||"21") - 21)*366).toString() : selectedCenter + selectedFy + "9" + day.toString().padStart(3, "0")) + "XXXX"
               : selectedCenter + selectedFy + day.toString().padStart(3, "0") + "5XXXX"
           }
           domain={[(currentExistsDays.min() ?? 0) - 1, (currentExistsDays.max() ?? 1) + 1]}
@@ -417,7 +417,7 @@ const App: React.FC<{}> = () => {
       width={150}
       tickFormatter={(day) =>
         mode === "data_center_year_code_day_serial"
-          ? selectedCenter + selectedFy + "9" + day.toString().padStart(3, "0") + "XXXX"
+          ? (selectedCenter === "IOE" ? selectedCenter + "09" + (day+1000+(Number.parseInt(selectedFy||"21") - 21)*366).toString() : selectedCenter + selectedFy + "9" + day.toString().padStart(3, "0")) + "XXXX"
           : selectedCenter + selectedFy + day.toString().padStart(3, "0") + "5XXXX"
       }
       tick={{ fontSize: "6" }}
@@ -525,7 +525,7 @@ const App: React.FC<{}> = () => {
     <FormControl fullWidth={true} component="fieldset">
       <FormLabel component="legend">Fiscal Year</FormLabel>
       <RadioGroup aria-label="fy" name="fy" value={selectedFy} onChange={(e) => setSearchParam("fy", e.target.value)} row={true}>
-        {["21", "22"].map((f, ind) => (
+        {["21", "22", "23"].map((f, ind) => (
           <FormControlLabel key={ind} value={f} control={<Radio />} label={f} />
         ))}
       </RadioGroup>
